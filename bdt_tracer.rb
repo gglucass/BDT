@@ -14,6 +14,12 @@ Before do |scenario|
   $user_story = scenario.source[0].description
 end
 
+After do |scenario|
+  location = scenario.source[0].location.to_s.split('/')[-1].split('.')[0]
+  File.open("log/bdt_logs/all/#{location}", "w") { |f| f.write($tp_logger) }
+  $tp_logger = ""
+end
+
 AfterConfiguration do |config|
   config.on_event :before_test_case do |event|
     $test_case = event.test_case.location.to_s
@@ -36,5 +42,6 @@ AfterConfiguration do |config|
 end
 
 at_exit do
-  File.open('log/bdt_logs/bdt', "w") { |f| f.write($tp_logger) 
+  File.open('log/bdt_logs/bdt', "w") { |f| f.write($tp_logger) }
+  system("cat * > bdt_all")
 end
